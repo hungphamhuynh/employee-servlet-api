@@ -26,8 +26,8 @@ public final class HibernateUtil {
             for (String key : props.stringPropertyNames()) {
                 settings.put(key, props.getProperty(key));
             }
-
-            emf = Persistence.createEntityManagerFactory("P", settings);
+            System.out.println(settings);
+            emf = Persistence.createEntityManagerFactory("employee-service", settings);
         } catch (Exception e){
             throw new ExceptionInInitializerError("EntityManagerFactory creation failed");
         }
