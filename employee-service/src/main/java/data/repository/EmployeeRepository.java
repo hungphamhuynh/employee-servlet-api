@@ -1,6 +1,7 @@
 package data.repository;
 
 import data.entity.Employee;
+import exception.EmployeeNotFoundException;
 import jakarta.persistence.*;
 import org.hibernate.Transaction;
 import util.HibernateUtil;
