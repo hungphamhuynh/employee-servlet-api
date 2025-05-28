@@ -8,6 +8,7 @@ import data.repository.DegreeRepository;
 import data.repository.DepartmentRepository;
 import data.repository.EmployeeRepository;
 import data.request.AddEmployeeRequest;
+import data.request.UpdateEmployeeRequest;
 import data.response.EmployeeResponse;
 import exception.DegreeNotFoundException;
 import exception.DepartmentNotFoundException;
@@ -42,9 +43,6 @@ public class EmployeeService {
 
     public List<EmployeeResponse> getAllEmployees() {
         List<Employee> employees = employeeRepository.getAllEmployees();
-        if (employees.isEmpty())
-            throw new EmployeeNotFoundException("There are no employees");
-
         List<EmployeeResponse> employeeResponses = new ArrayList<>();
         for (Employee employee : employees) {
             employeeResponses.add(EmployeeMapper.toEmployeeResponse(employee));
@@ -53,27 +51,69 @@ public class EmployeeService {
     }
 
     public EmployeeResponse addEmployee(AddEmployeeRequest request) {
-        Department department = null;
-        Degree degree = null;
-        if (request.getDepartmentId() > 0) {
-            try {
-                department = departmentRepository.getDepartment(request.getDepartmentId());
-            } catch (EntityNotFoundException e){
-                throw new DepartmentNotFoundException(e.getMessage());
-            }
-        }
-        if (request.getDegreeId() > 0) {
-            try {
-                degree = degreeRepository.getDegree(request.getDegreeId());
-            } catch (EntityNotFoundException e){
-                throw new DegreeNotFoundException(e.getMessage());
-            }
-        }
+        Department department = getDepartmentById(request.getDepartmentId());
+        Degree degree = getDegree(request.getDegreeId());
 
         Employee newEmployee = EmployeeMapper.toEmployee(request);
         newEmployee.setDepartment(department);
         newEmployee.setDegree(degree);
         employeeRepository.add(newEmployee);
         return EmployeeMapper.toEmployeeResponse(newEmployee);
+    }
+
+    public EmployeeResponse updateEmployee(UpdateEmployeeRequest request) {
+        if (request.getEmployeeId() <= 0)
+            throw new IllegalArgumentException("ID must be positive");
+
+        Department department = getDepartmentById(request.getDepartmentId());
+        Degree degree = getDegree(request.getDegreeId());
+
+        Employee employee = EmployeeMapper.toEmployee(request);
+        try {
+            employeeRepository.getEmployee(employee.getId());
+        } catch (EntityNotFoundException e){
+            throw new EmployeeNotFoundException(e.getMessage());
+        }
+        employee.setDepartment(department);
+        employee.setDegree(degree);
+        employee = employeeRepository.update(employee);
+        return EmployeeMapper.toEmployeeResponse(employee);
+    }
+
+    public EmployeeResponse deleteEmployee(int id) {
+        if (id <= 0)
+            throw new IllegalArgumentException("ID must be positive");
+
+        try {
+            Employee employee = employeeRepository.getEmployee(id);
+            employeeRepository.delete(employee.getId());
+            return EmployeeMapper.toEmployeeResponse(employee);
+        } catch (EntityNotFoundException e){
+            throw new EmployeeNotFoundException(e.getMessage());
+        }
+    }
+
+    public Department getDepartmentById(int departmentId) {
+        Department department = null;
+        if (departmentId > 0) {
+            try {
+                department = departmentRepository.getDepartment(departmentId);
+            } catch (EntityNotFoundException e){
+                throw new DepartmentNotFoundException(e.getMessage());
+            }
+        }
+        return department;
+    }
+
+    public Degree getDegree(int degreeId) {
+        Degree degree = null;
+        if (degreeId > 0) {
+            try {
+                degree = degreeRepository.getDegree(degreeId);
+            } catch (EntityNotFoundException e){
+                throw new DegreeNotFoundException(e.getMessage());
+            }
+        }
+        return degree;
     }
 }

@@ -1,52 +1,52 @@
 package data.repository;
 
 import data.entity.Employee;
-import exception.EmployeeNotFoundException;
+import data.entity.Payroll;
 import jakarta.persistence.*;
-import org.hibernate.Transaction;
 import util.HibernateUtil;
 
+import java.time.Instant;
 import java.util.List;
 
-public class EmployeeRepository {
+public class PayrollRepository {
     private final EntityManagerFactory emf;
 
-    public EmployeeRepository() {
+    public PayrollRepository() {
         emf = HibernateUtil.getEntityManagerFactory();
     }
 
-    public Employee getEmployee(int id) {
+    public Payroll getPayroll(int id) {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createQuery(
-                            "SELECT e FROM Employee e LEFT JOIN FETCH e.degree LEFT JOIN FETCH e.department WHERE e.id = :id", Employee.class)
+                            "SELECT p FROM Payroll p LEFT JOIN FETCH p.employee e LEFT JOIN FETCH e.degree WHERE p.id = :id", Payroll.class)
                     .setParameter("id", id)
                     .getSingleResult();
         } catch (NoResultException e) {
-            throw new EntityNotFoundException("Employee with id " + id + " not found");
+            throw new EntityNotFoundException("Payroll with id " + id + " not found");
         }
     }
 
-    public List<Employee> getAllEmployees() {
+    public List<Payroll> getAllPayrolls() {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createQuery(
-                    "SELECT e FROM Employee e left join fetch e.department left join fetch e.degree", Employee.class)
+                            "SELECT p FROM Payroll p left join fetch p.employee e left join fetch e.degree", Payroll.class)
                     .getResultList();
         } catch (RuntimeException e) {
-            throw new RuntimeException("Failed to get employees", e);
+            throw new RuntimeException("Failed to get payrolls", e);
         }
     }
 
-    public Employee add(Employee employee) {
+    public Payroll add(Payroll payroll) {
         EntityTransaction tx = null;
         try (EntityManager em = emf.createEntityManager()) {
             tx = em.getTransaction();
             tx.begin();
-            em.persist(employee);
+            em.persist(payroll);
             tx.commit();
-            return employee;
+            return payroll;
         } catch (RuntimeException e) {
             rollbackTransaction(tx);
-            throw new RuntimeException("Database error while adding employee", e);
+            throw new RuntimeException("Database error while adding payroll", e);
         }
     }
 
@@ -55,31 +55,47 @@ public class EmployeeRepository {
         try (EntityManager em = emf.createEntityManager()) {
             tx = em.getTransaction();
             tx.begin();
-            Employee employee = em.createQuery(
-                            "SELECT e FROM Employee e LEFT JOIN FETCH e.degree LEFT JOIN FETCH e.department WHERE e.id = :id", Employee.class)
+            Payroll payroll = em.createQuery(
+                            "SELECT p FROM Payroll p LEFT JOIN FETCH p.employee e LEFT JOIN FETCH e.degree WHERE p.id = :id", Payroll.class)
                     .setParameter("id", id)
                     .getSingleResult();
-            em.remove(employee);
+            em.remove(payroll);
             tx.commit();
         } catch (NoResultException e) {
-            throw new EntityNotFoundException("Employee with ID " + id + " not found for deletion.");
+            throw new EntityNotFoundException("Payroll with ID " + id + " not found for deletion.");
         } catch (RuntimeException e) {
             rollbackTransaction(tx);
-            throw new RuntimeException("Database error while deleting employee", e);
+            throw new RuntimeException("Database error while deleting payroll", e);
         }
     }
 
-    public Employee update(Employee employee) {
+    public Payroll update(Payroll payroll) {
         EntityTransaction tx = null;
         try (EntityManager em = emf.createEntityManager()) {
             tx = em.getTransaction();
             tx.begin();
-            em.merge(employee);
+            em.merge(payroll);
             tx.commit();
-            return employee;
+            return payroll;
         } catch (RuntimeException e) {
             rollbackTransaction(tx);
-            throw new RuntimeException("Database error while updating employee", e);
+            throw new RuntimeException("Database error while updating payroll", e);
+        }
+    }
+
+    public boolean existsByEmployeeIdAndMonth(int employeeId, Instant month) {
+        try (EntityManager em = emf.createEntityManager()) {
+            String jpql = "SELECT p FROM Payroll p WHERE p.employee.id = :employeeId AND p.payrollDate = :month";
+            try {
+                em.createQuery(jpql, Payroll.class)
+                        .setParameter("employeeId", employeeId)
+                        .setParameter("month", month)
+                        .setMaxResults(1)
+                        .getSingleResult();
+                return true;
+            } catch (NoResultException e) {
+                return false;
+            }
         }
     }
 

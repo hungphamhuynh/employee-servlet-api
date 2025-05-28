@@ -1,6 +1,7 @@
 package servlet;
 
 import data.repository.EmployeeRepository;
+import data.request.UpdateEmployeeRequest;
 import data.response.EmployeeResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,13 +10,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.EmployeeService;
 import util.HttpResponseUtil;
+import util.JsonUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-@WebServlet("/employee/find-all")
-public class FindAllEmployeeServlet extends HttpServlet {
+@WebServlet("/employee/update")
+public class UpdateEmployeeServlet extends HttpServlet {
     private EmployeeService employeeService;
 
     @Override
@@ -24,17 +24,14 @@ public class FindAllEmployeeServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<EmployeeResponse> responses = employeeService.getAllEmployees();
-        String message;
-        if (responses.isEmpty()) {
-            message = "There are no employees in the database";
-        } else message = "There are " + responses.size() + " employees in the database";
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UpdateEmployeeRequest requestBody = JsonUtil.fromJson(req.getInputStream(), UpdateEmployeeRequest.class);
+        EmployeeResponse employeeResponse = employeeService.updateEmployee(requestBody);
         HttpResponseUtil.sendSuccess(
                 resp,
                 HttpServletResponse.SC_OK,
-                message,
-                responses
+                "Employee updated successfully",
+                employeeResponse
         );
     }
 }

@@ -2,6 +2,7 @@ package data.mapper;
 
 import data.entity.Employee;
 import data.request.AddEmployeeRequest;
+import data.request.UpdateEmployeeRequest;
 import data.response.EmployeeResponse;
 
 public class EmployeeMapper {
@@ -24,6 +25,16 @@ public class EmployeeMapper {
 
     public static Employee toEmployee(AddEmployeeRequest request) {
         Employee employee = new Employee();
+        employee.setEmployeeName(request.getEmployeeName());
+        employee.setDateOfBirth(request.getDateOfBirth());
+        employee.setBasicSalary(request.getBasicSalary());
+        employee.setPhoneNumber(request.getPhoneNumber());
+        return employee;
+    }
+
+    public static Employee toEmployee(UpdateEmployeeRequest request) {
+        Employee employee = new Employee();
+        employee.setId(request.getEmployeeId());
         employee.setEmployeeName(request.getEmployeeName());
         employee.setDateOfBirth(request.getDateOfBirth());
         employee.setBasicSalary(request.getBasicSalary());
