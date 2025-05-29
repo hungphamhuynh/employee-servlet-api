@@ -9,7 +9,9 @@ public class EmployeeResponse {
     private Instant dateOfBirth;
     private Double basicSalary;
     private String phoneNumber;
+    private int departmentId;
     private String departmentName;
+    private int degreeId;
     private String degreeName;
 
     public int getEmployeeId() {
@@ -66,5 +68,21 @@ public class EmployeeResponse {
 
     public void setDegreeName(String degreeName) {
         this.degreeName = degreeName;
+    }
+
+    public int getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(int departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public int getDegreeId() {
+        return degreeId;
+    }
+
+    public void setDegreeId(int degreeId) {
+        this.degreeId = degreeId;
     }
 }

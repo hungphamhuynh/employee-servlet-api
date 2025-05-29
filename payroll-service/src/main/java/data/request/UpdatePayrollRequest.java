@@ -1,14 +1,11 @@
-package data.response;
+package data.request;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-public class PayrollResponse {
+public class UpdatePayrollRequest {
     private int payrollId;
     private int employeeId;
-    private String employeeName;
-    private double basicSalary;
-    private double baseSalaryFactor;
     private Long workingDays;
     private BigDecimal advancePayment;
     private Instant borrowedDate;
@@ -23,28 +20,12 @@ public class PayrollResponse {
         this.payrollId = payrollId;
     }
 
-    public String getEmployeeName() {
-        return employeeName;
+    public int getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployeeName(String employeeName) {
-        this.employeeName = employeeName;
-    }
-
-    public double getBasicSalary() {
-        return basicSalary;
-    }
-
-    public void setBasicSalary(double basicSalary) {
-        this.basicSalary = basicSalary;
-    }
-
-    public double getBaseSalaryFactor() {
-        return baseSalaryFactor;
-    }
-
-    public void setBaseSalaryFactor(double baseSalaryFactor) {
-        this.baseSalaryFactor = baseSalaryFactor;
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
     }
 
     public Long getWorkingDays() {
@@ -85,13 +66,5 @@ public class PayrollResponse {
 
     public void setNetSalary(BigDecimal netSalary) {
         this.netSalary = netSalary;
-    }
-
-    public int getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
     }
 }

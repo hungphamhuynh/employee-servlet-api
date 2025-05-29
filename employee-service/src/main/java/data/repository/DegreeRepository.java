@@ -18,7 +18,8 @@ public class DegreeRepository {
     public Degree getDegree(int id) {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createQuery(
-                            "SELECT d FROM Degree d", Degree.class)
+                            "SELECT d FROM Degree d where d.id=:id", Degree.class)
+                    .setParameter("id", id)
                     .getSingleResult();
         } catch (NoResultException e) {
             throw new EntityNotFoundException("Degree with id " + id + " not found");

@@ -1,26 +1,28 @@
-expackage servlet;
+package servlet;
 
-import data.entity.Employee;
+import data.entity.Payroll;
 import data.repository.EmployeeRepository;
-import data.response.EmployeeResponse;
+import data.repository.PayrollRepository;
 import data.response.ErrorType;
+import data.response.PayrollResponse;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.EmployeeService;
+import service.PayrollService;
 import util.HttpResponseUtil;
 
 import java.io.IOException;
 
-@WebServlet("/employee/find")
-public class FindEmployeeServlet extends HttpServlet {
-    private EmployeeService employeeService;
+@WebServlet("/payroll/find")
+public class FindPayrollServlet extends HttpServlet {
+    private PayrollService payrollService;
 
     @Override
     public void init() throws ServletException {
-        employeeService = new EmployeeService(new EmployeeRepository());
+        payrollService = new PayrollService(new PayrollRepository());
     }
 
     @Override
@@ -30,23 +32,23 @@ public class FindEmployeeServlet extends HttpServlet {
             HttpResponseUtil.sendError(
                     resp,
                     HttpServletResponse.SC_BAD_REQUEST,
-                    "Employee id is required",
+                    "Payroll id is required",
                     ErrorType.INVALID_INPUT
             );
             return;
         }
 
         try {
-            int employeeId = Integer.parseInt(id);
-            EmployeeResponse response = employeeService.getEmployeeById(employeeId);
+            int payrollId = Integer.parseInt(id);
+            PayrollResponse response = payrollService.getPayrollById(payrollId);
             HttpResponseUtil.sendSuccess(
                     resp,
                     HttpServletResponse.SC_OK,
-                    "Employee retrieved successfully",
+                    "Payroll retrieved successfully",
                     response
             );
         } catch (NumberFormatException e){
-            throw new IllegalArgumentException("Employee id is not a number");
+            throw new IllegalArgumentException("Payroll id is not a number");
         }
     }
 }

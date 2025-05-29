@@ -1,4 +1,4 @@
-package data.mapper;
+spackage data.mapper;
 
 import data.entity.Employee;
 import data.request.AddEmployeeRequest;
@@ -15,9 +15,11 @@ public class EmployeeMapper {
         employeeResponse.setBasicSalary(employee.getBasicSalary());
         employeeResponse.setPhoneNumber(employee.getPhoneNumber());
         if (employee.getDepartment() != null) {
+            employeeResponse.setDepartmentId(employee.getDepartment().getId());
             employeeResponse.setDepartmentName(employee.getDepartment().getDepartmentName());
         }
         if (employee.getDegree() != null) {
+            employeeResponse.setDegreeId(employee.getDegree().getId());
             employeeResponse.setDegreeName(employee.getDegree().getDegreeName());
         }
         return employeeResponse;

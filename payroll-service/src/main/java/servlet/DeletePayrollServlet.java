@@ -1,52 +1,52 @@
-expackage servlet;
+package servlet;
 
-import data.entity.Employee;
 import data.repository.EmployeeRepository;
-import data.response.EmployeeResponse;
+import data.repository.PayrollRepository;
 import data.response.ErrorType;
+import data.response.PayrollResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.EmployeeService;
+import service.PayrollService;
 import util.HttpResponseUtil;
 
 import java.io.IOException;
 
-@WebServlet("/employee/find")
-public class FindEmployeeServlet extends HttpServlet {
-    private EmployeeService employeeService;
+@WebServlet("/payroll/delete")
+public class DeletePayrollServlet extends HttpServlet {
+    private PayrollService payrollService;
 
     @Override
     public void init() throws ServletException {
-        employeeService = new EmployeeService(new EmployeeRepository());
+        payrollService = new PayrollService(new PayrollRepository());
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null || id.isEmpty()) {
             HttpResponseUtil.sendError(
                     resp,
                     HttpServletResponse.SC_BAD_REQUEST,
-                    "Employee id is required",
+                    "Payroll id is required",
                     ErrorType.INVALID_INPUT
             );
             return;
         }
 
         try {
-            int employeeId = Integer.parseInt(id);
-            EmployeeResponse response = employeeService.getEmployeeById(employeeId);
+            int payrollId = Integer.parseInt(id);
+            PayrollResponse response = payrollService.deletePayroll(payrollId);
             HttpResponseUtil.sendSuccess(
                     resp,
                     HttpServletResponse.SC_OK,
-                    "Employee retrieved successfully",
+                    "Payroll deleted",
                     response
             );
         } catch (NumberFormatException e){
-            throw new IllegalArgumentException("Employee id is not a number");
+            throw new IllegalArgumentException("Payroll id is not a number");
         }
     }
 }

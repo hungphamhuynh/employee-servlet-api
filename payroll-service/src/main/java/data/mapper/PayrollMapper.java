@@ -3,6 +3,8 @@ package data.mapper;
 import data.entity.Degree;
 import data.entity.Employee;
 import data.entity.Payroll;
+import data.request.AddPayrollRequest;
+import data.request.UpdatePayrollRequest;
 import data.response.PayrollResponse;
 
 public class PayrollMapper {
@@ -17,6 +19,7 @@ public class PayrollMapper {
 
         if (payroll.getEmployee() != null) {
             Employee employee = payroll.getEmployee();
+            response.setEmployeeId(employee.getId());
             response.setEmployeeName(employee.getEmployeeName());
             response.setBasicSalary(employee.getBasicSalary());
             Degree degree = employee.getDegree();
@@ -25,5 +28,26 @@ public class PayrollMapper {
             }
         }
         return response;
+    }
+
+    public static Payroll toPayroll(AddPayrollRequest request) {
+        Payroll payroll = new Payroll();
+        payroll.setWorkingDays(request.getWorkingDays());
+        payroll.setAdvancePayment(request.getAdvancePayment());
+        payroll.setBorrowedDate(request.getBorrowedDate());
+        payroll.setPayrollDate(request.getPayrollDate());
+        payroll.setNetSalary(request.getNetSalary());
+        return payroll;
+    }
+
+    public static Payroll toPayroll(UpdatePayrollRequest request) {
+        Payroll payroll = new Payroll();
+        payroll.setId(request.getPayrollId());
+        payroll.setWorkingDays(request.getWorkingDays());
+        payroll.setAdvancePayment(request.getAdvancePayment());
+        payroll.setBorrowedDate(request.getBorrowedDate());
+        payroll.setPayrollDate(request.getPayrollDate());
+        payroll.setNetSalary(request.getNetSalary());
+        return payroll;
     }
 }

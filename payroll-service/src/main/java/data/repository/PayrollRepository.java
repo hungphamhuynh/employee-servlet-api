@@ -6,6 +6,10 @@ import jakarta.persistence.*;
 import util.HibernateUtil;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 public class PayrollRepository {
@@ -85,11 +89,22 @@ public class PayrollRepository {
 
     public boolean existsByEmployeeIdAndMonth(int employeeId, Instant month) {
         try (EntityManager em = emf.createEntityManager()) {
-            String jpql = "SELECT p FROM Payroll p WHERE p.employee.id = :employeeId AND p.payrollDate = :month";
+            int targetMonth = month.atZone(ZoneId.systemDefault()).getMonthValue();
+            int targetYear = month.atZone(ZoneId.systemDefault()).getYear();
+
+            System.out.println("targetMonth: " + targetMonth);
+            System.out.println("targetYear: " + targetYear);
+
+            String jpql = "SELECT p FROM Payroll p " +
+                    "WHERE p.employee.id = :employeeId " +
+                    "AND FUNCTION('MONTH', p.payrollDate) = :targetMonth " +
+                    "AND FUNCTION('YEAR', p.payrollDate) = :targetYear";
+
             try {
                 em.createQuery(jpql, Payroll.class)
                         .setParameter("employeeId", employeeId)
-                        .setParameter("month", month)
+                        .setParameter("targetMonth", targetMonth)
+                        .setParameter("targetYear", targetYear)
                         .setMaxResults(1)
                         .getSingleResult();
                 return true;

@@ -1,6 +1,5 @@
 package data.repository;
 
-import data.entity.Department;
 import data.entity.Employee;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -8,21 +7,21 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.NoResultException;
 import util.HibernateUtil;
 
-public class DepartmentRepository {
+public class EmployeeRepository {
     private final EntityManagerFactory emf;
 
-    public DepartmentRepository() {
+    public EmployeeRepository() {
         emf = HibernateUtil.getEntityManagerFactory();
     }
 
-    public Department getDepartment(int id) {
+    public Employee getEmployee(int id) {
         try (EntityManager em = emf.createEntityManager()) {
             return em.createQuery(
-                            "SELECT d FROM Department d where d.id=:id", Department.class)
+                            "SELECT e FROM Employee e LEFT JOIN FETCH e.degree WHERE e.id = :id", Employee.class)
                     .setParameter("id", id)
                     .getSingleResult();
         } catch (NoResultException e) {
-            throw new EntityNotFoundException("Department with id " + id + " not found");
+            throw new EntityNotFoundException("Employee with id " + id + " not found");
         }
     }
 }
