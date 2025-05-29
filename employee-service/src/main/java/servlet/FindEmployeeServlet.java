@@ -1,4 +1,4 @@
-expackage servlet;
+package servlet;
 
 import data.entity.Employee;
 import data.repository.EmployeeRepository;
