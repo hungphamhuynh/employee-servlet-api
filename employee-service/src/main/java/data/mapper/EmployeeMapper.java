@@ -1,4 +1,4 @@
-spackage data.mapper;
+package data.mapper;
 
 import data.entity.Employee;
 import data.request.AddEmployeeRequest;
